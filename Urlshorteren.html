@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            padding: 0px 0px;
+            margin: 0px 0px;
+        }
+        body {
+            background-color: rgb(127, 217, 255);
+        }
+        .main {
+            position: relative;
+            background-color: rgb(216, 18, 117);
+            height: 500px;
+            width: 500px;
+            left: 50%;
+            top: 50%;
+            margin: 2px;
+            transform: translate(-50%, 50%);
+            border: 5px solid rgb(90, 128, 0);
+            border-radius: 20px;
+        }
+        #longurl {
+            position: relative;
+            width: 300px;
+            height: 40px;
+            right: 50%;
+            left: 35%;
+            top: 30%;
+            margin: 2px;
+            transform: translate(-50%, 50%);
+            border: 5px solid purple;
+            border-radius: 20px;
+        }
+        #shortern {
+            position: relative;
+            top: 9px;
+            left: 35%;
+            width: 300px;
+            height: 40px;
+            top: 35%;
+            margin: 2px;
+            transform: translate(-50%, 50%);
+            border: 5px solid purple;
+            border-radius: 20px;
+        }
+        #shorten {
+            position: relative;
+            background-color: antiquewhite;
+            width: 100px;
+            height: 50px;
+            left: 20%;
+            top: 30%;
+            margin: 2px;
+            transform: translate(-50%, 50%);
+            border: 5px solid purple;
+            border-radius: 20px;
+        }
+        #copy {
+            position: relative;
+            background-color: antiquewhite;
+            width: 100px;
+            height: 50px;
+            left: 20%;
+            top: 35%;
+            margin: 2px;
+            transform: translate(-50%, 50%);
+            border: 5px solid purple;
+            border-radius: 20px;
+        }
+        #copy:hover {
+            background-color: aqua;
+        }
+        #shorten:hover {
+            background-color: aqua;
+        }
+        .main p {
+            position: relative;
+            height: 50px;
+            width: 500px;
+            left: 10%;
+            top: 20%;
+            margin: 2px;
+            font-size: 50px;
+            font-family: monospace;
+            font-weight: bold;
+            color: rgb(42, 136, 165);
+        }
+    </style>
+</head>
+<body>
+    <div class="main">
+        <p>Url Shortener</p>
+        <input type="text" name="" id="longurl">
+        <button id="shorten">shorten</button><br>
+        <input type="text" name="" id="shortern">
+        <button id="copy">copy</button>
+    </div>
+    <script>
+        let btn = document.getElementById("shorten");
+        let copyBtn = document.getElementById("copy");
+
+        btn.addEventListener("click", short);
+        copyBtn.addEventListener("click", copyToClipboard);
+
+        function short() {
+            let longurl = document.getElementById("longurl").value;
+
+            if (longurl.trim() === "") {
+                alert("Please enter a URL.");
+                return;
+            }
+
+            // Simulating a shortened URL (replace with real API later)
+            let shortUrl = "https://short.ly/" + Math.random().toString(36).substring(7);
+
+            // Set the shortened URL into the second input
+            document.getElementById("shortern").value = shortUrl;
+        }
+
+        function copyToClipboard() {
+            let shortUrl = document.getElementById("shortern");
+
+            if (shortUrl.value.trim() === "") {
+                alert("No shortened URL to copy.");
+                return;
+            }
+
+            shortUrl.select();
+            shortUrl.setSelectionRange(0, 99999); // for mobile devices
+
+            navigator.clipboard.writeText(shortUrl.value)
+                .then(() => {
+                    alert("Shortened URL copied to clipboard!");
+                })
+                .catch(err => {
+                    alert("Failed to copy: " + err);
+                });
+        }
+    </script>
+</body>
+</html>
