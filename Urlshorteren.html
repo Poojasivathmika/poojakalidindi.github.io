@@ -3,142 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>URL Shortener</title>
     <style>
         * {
-            padding: 0px 0px;
-            margin: 0px 0px;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
         body {
-            background-color: rgb(127, 217, 255);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
         }
-        .main {
-            position: relative;
-            background-color: rgb(216, 18, 117);
-            height: 500px;
-            width: 500px;
-            left: 50%;
-            top: 50%;
-            margin: 2px;
-            transform: translate(-50%, 50%);
-            border: 5px solid rgb(90, 128, 0);
-            border-radius: 20px;
+        .container {
+            border: 2px solid black;
+            width: 90%;
+            max-width: 700px;
+            height: auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            text-align: center;
         }
-        #longurl {
-            position: relative;
-            width: 300px;
-            height: 40px;
-            right: 50%;
-            left: 35%;
-            top: 30%;
-            margin: 2px;
-            transform: translate(-50%, 50%);
-            border: 5px solid purple;
-            border-radius: 20px;
+        h1 {
+            margin-bottom: 20px;
+            color: #333;
         }
-        #shortern {
-            position: relative;
-            top: 9px;
-            left: 35%;
-            width: 300px;
-            height: 40px;
-            top: 35%;
-            margin: 2px;
-            transform: translate(-50%, 50%);
-            border: 5px solid purple;
-            border-radius: 20px;
+        input[type="text"] {
+            width: 80%;
+            max-width: 500px;
+            padding: 10px;
+            margin: 10px 0;
+            border: 2px solid #333;
+            border-radius: 5px;
+            font-size: 16px;
         }
-        #shorten {
-            position: relative;
-            background-color: antiquewhite;
-            width: 100px;
-            height: 50px;
-            left: 20%;
-            top: 30%;
-            margin: 2px;
-            transform: translate(-50%, 50%);
-            border: 5px solid purple;
-            border-radius: 20px;
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
         }
-        #copy {
-            position: relative;
-            background-color: antiquewhite;
-            width: 100px;
-            height: 50px;
-            left: 20%;
-            top: 35%;
-            margin: 2px;
-            transform: translate(-50%, 50%);
-            border: 5px solid purple;
-            border-radius: 20px;
+        button:hover {
+            background-color: #0056b3;
         }
-        #copy:hover {
-            background-color: aqua;
+        #output {
+            margin-top: 20px;
+            font-size: 16px;
+            color: #333;
+            word-break: break-all;
         }
-        #shorten:hover {
-            background-color: aqua;
-        }
-        .main p {
-            position: relative;
-            height: 50px;
-            width: 500px;
-            left: 10%;
-            top: 20%;
-            margin: 2px;
-            font-size: 50px;
-            font-family: monospace;
-            font-weight: bold;
-            color: rgb(42, 136, 165);
+        @media (max-width: 600px) {
+            .container {
+                width: 95%;
+                padding: 15px;
+            }
+            input[type="text"] {
+                width: 90%;
+            }
+            button {
+                width: 100px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="main">
-        <p>Url Shortener</p>
-        <input type="text" name="" id="longurl">
-        <button id="shorten">shorten</button><br>
-        <input type="text" name="" id="shortern">
-        <button id="copy">copy</button>
+    <div class="container">
+        <h1>URL Shortener</h1>
+        <input type="text" id="longUrl" placeholder="Enter the URL">
+        <button onclick="short()">Short</button>
+        <p id="output"></p>
     </div>
     <script>
-        let btn = document.getElementById("shorten");
-        let copyBtn = document.getElementById("copy");
-
-        btn.addEventListener("click", short);
-        copyBtn.addEventListener("click", copyToClipboard);
-
         function short() {
-            let longurl = document.getElementById("longurl").value;
-
-            if (longurl.trim() === "") {
-                alert("Please enter a URL.");
+            let longUrl = document.getElementById("longUrl").value.trim();
+            if (!longUrl) {
+                document.getElementById("output").innerText = "Please enter a URL!";
                 return;
             }
-
-            // Simulating a shortened URL (replace with real API later)
-            let shortUrl = "https://short.ly/" + Math.random().toString(36).substring(7);
-
-            // Set the shortened URL into the second input
-            document.getElementById("shortern").value = shortUrl;
-        }
-
-        function copyToClipboard() {
-            let shortUrl = document.getElementById("shortern");
-
-            if (shortUrl.value.trim() === "") {
-                alert("No shortened URL to copy.");
-                return;
+            if (!longUrl.startsWith("http://") && !longUrl.startsWith("https://")) {
+                longUrl = "https://" + longUrl;
             }
-
-            shortUrl.select();
-            shortUrl.setSelectionRange(0, 99999); // for mobile devices
-
-            navigator.clipboard.writeText(shortUrl.value)
-                .then(() => {
-                    alert("Shortened URL copied to clipboard!");
+            document.getElementById("output").innerText = "Shortening...";
+            fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(longUrl)}`)
+                .then(response => response.text())
+                .then(shortUrl => {
+                    document.getElementById("output").innerText = shortUrl;
                 })
-                .catch(err => {
-                    alert("Failed to copy: " + err);
+                .catch(error => {
+                    document.getElementById("output").innerText = "Error: Couldn't shorten the URL!";
                 });
         }
     </script>
